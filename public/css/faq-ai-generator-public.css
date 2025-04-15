@@ -1,0 +1,52 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+.faq-ai-generator-container {
+    margin: 2em 0;
+    padding: 1em;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.faq-ai-generator-container h2 {
+    margin-top: 0;
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid #ddd;
+}
+
+.faq-ai-generator-list {
+    margin-top: 1em;
+}
+
+.faq-item {
+    margin-bottom: 1em;
+    padding: 1em;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.faq-question {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: #333;
+}
+
+.faq-answer {
+    color: #666;
+    line-height: 1.6;
+}
+
+.faq-answer p {
+    margin: 0.5em 0;
+}
+
+.faq-answer p:first-child {
+    margin-top: 0;
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}

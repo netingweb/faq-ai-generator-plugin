@@ -1,95 +1,114 @@
-=== FAQ AI Generator ===
-Contributors: netingweb
-Donate link: https://www.neting.it
-Tags: faq, ai, openai, schema.org, seo, wordpress, automation
-Requires at least: 5.0
-Tested up to: 6.4
-Stable tag: 1.0.0
+=== Plugin Name ===
+Contributors: (this should be a list of wordpress.org userid's)
+Donate link: https://lucamainieri.it/
+Tags: comments, spam
+Requires at least: 3.0.1
+Tested up to: 3.4
+Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Il plugin FAQ AI Generator automatizza la creazione di FAQ (Frequently Asked Questions) per gli articoli WordPress utilizzando l'intelligenza artificiale di OpenAI.
+Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
 
-== Descrizione ==
+== Description ==
 
-FAQ AI Generator è un plugin WordPress innovativo che utilizza l'intelligenza artificiale per generare automaticamente FAQ pertinenti per i tuoi articoli. Il plugin analizza il contenuto dell'articolo e genera domande e risposte pertinenti utilizzando l'API di OpenAI.
+This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
 
-**Caratteristiche principali:**
+For backwards compatibility, if this section is missing, the full length of the short description will be used, and
+Markdown parsed.
 
-* Generazione automatica di FAQ basata sul contenuto dell'articolo
-* Integrazione con lo schema.org per il miglioramento della SEO
-* Opzione per visualizzare o nascondere le FAQ nel contenuto dell'articolo
-* Editor integrato per modificare e personalizzare le FAQ generate
-* Supporto per la gestione manuale delle FAQ
-* Interfaccia utente intuitiva e facile da usare
-* Compatibile con l'editor Gutenberg e l'editor classico
+A few notes about the sections above:
 
-== Installazione ==
+*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
+*   "Tags" is a comma separated list of tags that apply to the plugin
+*   "Requires at least" is the lowest version that the plugin will work on
+*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
+higher versions... this is just the highest one you've verified.
+*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
+stable.
 
-1. Scarica il plugin
-2. Vai su WordPress > Plugin > Aggiungi nuovo
-3. Clicca su "Carica plugin" e seleziona il file ZIP scaricato
-4. Attiva il plugin
-5. Vai su Impostazioni > FAQ AI Generator per configurare le tue credenziali OpenAI
+    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
+if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
+for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
+is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
+your in-development version, without having that information incorrectly disclosed about the current stable version
+that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
 
-== Configurazione ==
+    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
+you put the stable version, in order to eliminate any doubt.
 
-1. Ottieni una chiave API da OpenAI (https://platform.openai.com)
-2. Vai su Impostazioni > FAQ AI Generator
-3. Inserisci la tua chiave API
-4. Configura le opzioni di generazione delle FAQ secondo le tue preferenze
+== Installation ==
 
-== Utilizzo ==
+This section describes how to install the plugin and get it working.
 
-1. Crea o modifica un articolo
-2. Nella schermata di modifica dell'articolo, troverai un nuovo box "FAQ AI Generator"
-3. Clicca su "Genera FAQ" per creare automaticamente le FAQ
-4. Modifica le FAQ generate se necessario
-5. Scegli se visualizzare le FAQ nel contenuto dell'articolo
-6. Pubblica l'articolo
+e.g.
 
-== Domande frequenti ==
+1. Upload `faq-ai-generator.php` to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
 
-= Ho bisogno di una chiave API di OpenAI? =
+== Frequently Asked Questions ==
 
-Sì, è necessaria una chiave API di OpenAI per utilizzare il plugin. Puoi ottenerne una gratuitamente su https://platform.openai.com.
+= A question that someone might have =
 
-= Posso modificare le FAQ generate? =
+An answer to that question.
 
-Sì, puoi modificare, aggiungere o eliminare le FAQ generate secondo le tue necessità.
+= What about foo bar? =
 
-= Le FAQ vengono automaticamente formattate per la SEO? =
-
-Sì, il plugin genera automaticamente lo schema.org per le FAQ, migliorando la SEO del tuo sito.
-
-= Il plugin funziona con l'editor Gutenberg? =
-
-Sì, il plugin è completamente compatibile sia con l'editor Gutenberg che con l'editor classico.
-
-== Changelog ==
-
-= 1.0.0 =
-* Rilascio iniziale del plugin
-* Generazione automatica di FAQ utilizzando OpenAI
-* Integrazione con schema.org
-* Editor per la modifica delle FAQ
-* Opzione per visualizzare/nascondere le FAQ nel contenuto
-* Interfaccia amministrativa completa
-* Supporto multilingua
-* Compatibilità con Gutenberg e editor classico
-
-== Upgrade Notice ==
-
-= 1.0.0 =
-Prima versione del plugin. Si consiglia di eseguire un backup del database prima dell'installazione.
+Answer to foo bar dilemma.
 
 == Screenshots ==
 
-1. Interfaccia di generazione delle FAQ
-2. Editor delle FAQ
-3. Impostazioni del plugin
-4. Visualizzazione delle FAQ nell'articolo
+1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
+the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
+directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
+(or jpg, jpeg, gif).
+2. This is the second screen shot
 
-== Note aggiuntive ==
+== Changelog ==
 
-Il plugin è stato sviluppato da Neting Web Solutions e utilizza l'API di OpenAI per la generazione delle FAQ. Per ulteriori informazioni, visita https://www.neting.it 
+= 1.0 =
+* A change since the previous version.
+* Another change.
+
+= 0.5 =
+* List versions from most recent at top to oldest at bottom.
+
+== Upgrade Notice ==
+
+= 1.0 =
+Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
+
+= 0.5 =
+This version fixes a security related bug.  Upgrade immediately.
+
+== Arbitrary section ==
+
+You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
+plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
+"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
+
+== A brief Markdown Example ==
+
+Ordered list:
+
+1. Some feature
+1. Another feature
+1. Something else about the plugin
+
+Unordered list:
+
+* something
+* something else
+* third thing
+
+Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
+Titles are optional, naturally.
+
+[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
+            "Markdown is what the parser uses to process much of the readme file"
+
+Markdown uses email style notation for blockquotes and I've been told:
+> Asterisks for *emphasis*. Double it up  for **strong**.
+
+`<?php code(); // goes in backticks ?>`
