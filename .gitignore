@@ -1,0 +1,55 @@
+# File di sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# File di ambiente
+.env
+.env.local
+.env.*.local
+
+# File di IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# File di dipendenze
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+yarn.lock
+
+# File di build e distribuzione
+/dist/
+/build/
+*.zip
+
+# File di log
+*.log
+logs/
+
+# File di configurazione locale
+wp-config.php
+wp-config-local.php
+
+# File temporanei
+*.tmp
+*.temp
+*.bak
+
+# File di debug
+debug.log
+debug.txt
+
+# File di cache
+*.cache
+.cache/
+wp-content/cache/
+
+# File di backup
+*.backup
+*.bak
+*.old 
