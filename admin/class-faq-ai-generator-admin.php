@@ -137,7 +137,8 @@ class Faq_Ai_Generator_Admin {
 		$valid['api_key'] = sanitize_text_field($input['api_key']);
 		$valid['ai_provider'] = sanitize_text_field($input['ai_provider']);
 		$valid['model'] = sanitize_text_field($input['model']);
-		$valid['custom_instructions'] = sanitize_textarea_field($input['custom_instructions']);
+		$valid['extra_prompt'] = isset($input['extra_prompt']) ? sanitize_textarea_field($input['extra_prompt']) : '';
+		$valid['custom_instructions'] = isset($input['custom_instructions']) ? sanitize_textarea_field($input['custom_instructions']) : '';
 
 		// Se la chiave API è stata modificata, verifichiamola
 		if (!empty($valid['api_key']) && $valid['api_key'] !== get_option('faq_ai_generator_settings')['api_key']) {
@@ -196,9 +197,10 @@ class Faq_Ai_Generator_Admin {
 		if ($model_info) {
 			echo '<div class="faq-model-info">';
 			echo sprintf(
-				__('FAQ generate con %s il %s', 'faq-ai-generator'),
-				'<strong>' . esc_html($model_info['name']) . '</strong>',
-				date_i18n(get_option('date_format'), $model_info['timestamp'])
+				__('FAQ generate con %s il %s alle %s', 'faq-ai-generator'),
+				'<strong>' . esc_html($model_info['id']) . '</strong>',
+				date_i18n(get_option('date_format'), $model_info['timestamp']),
+				date('H:i', $model_info['timestamp'])
 			);
 			echo '</div>';
 		}
@@ -256,10 +258,9 @@ class Faq_Ai_Generator_Admin {
 			'faqs' => $result,
 			'model_used' => array(
 				'id' => $model_id,
-				'name' => $model_details['name'],
 				'timestamp' => current_time('timestamp')
 			),
-			'display_in_content' => true // Impostiamo sempre true per default
+			'display_in_content' => true
 		);
 
 		// Recupera le FAQ esistenti per mantenere il valore di display_in_content

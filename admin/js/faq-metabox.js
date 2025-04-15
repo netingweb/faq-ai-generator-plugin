@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
     const $metabox = $('.faq-ai-generator-metabox');
     const $list = $('.faq-ai-generator-list');
     const $generateBtn = $('#faq-ai-generate');
+    const $addBtn = $('#faq-ai-add');
     const $confirmDialog = $('#faq-ai-confirm-dialog');
     const $overwriteBtn = $('#faq-ai-overwrite');
     const $appendBtn = $('#faq-ai-append');
@@ -12,6 +13,12 @@ jQuery(document).ready(function($) {
     // Il pulsante "Genera FAQ" mostra solo il popup
     $generateBtn.on('click', function() {
         $confirmDialog.show();
+    });
+
+    // Gestione click su "Aggiungi una nuova FAQ"
+    $addBtn.on('click', function() {
+        const index = $('.faq-item').length;
+        addFaqItem('', '', index);
     });
 
     // Gestione click su "Sovrascrivi FAQ esistenti"

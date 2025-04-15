@@ -23,7 +23,9 @@ require_once plugin_dir_path(dirname(__FILE__)) . '../includes/class-faq-ai-gene
 $settings = get_option('faq_ai_generator_settings', array(
     'api_key' => '',
     'ai_provider' => 'openai',
-    'model' => 'gpt-3.5-turbo'
+    'model' => 'gpt-3.5-turbo',
+    'extra_prompt' => '',
+    'custom_instructions' => ''
 ));
 
 // Recupera lo stato dell'API
@@ -103,6 +105,23 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                             <?php echo esc_html($available_models[$settings['model']]['description']); ?>
                         </p>
                     <?php endif; ?>
+                </td>
+            </tr>
+            
+            <tr>
+                <th scope="row">
+                    <label for="extra_prompt"><?php _e('Extra Prompt', 'faq-ai-generator'); ?></label>
+                </th>
+                <td>
+                    <textarea 
+                        id="extra_prompt" 
+                        name="faq_ai_generator_settings[extra_prompt]" 
+                        class="large-text code" 
+                        rows="3"
+                    ><?php echo esc_textarea(isset($settings['extra_prompt']) ? $settings['extra_prompt'] : ''); ?></textarea>
+                    <p class="description">
+                        <?php _e('Istruzioni extra per il prompt AI (da usare con cautela). Queste istruzioni verranno aggiunte all\'inizio del prompt.', 'faq-ai-generator'); ?>
+                    </p>
                 </td>
             </tr>
         </table>
