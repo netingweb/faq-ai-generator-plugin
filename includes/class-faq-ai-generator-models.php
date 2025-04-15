@@ -25,6 +25,18 @@ class Faq_Ai_Generator_Models {
             'gpt-4' => array(
                 'name' => 'GPT-4',
                 'description' => __('Modello più avanzato e preciso, ideale per contenuti complessi', 'faq-ai-generator')
+            ),
+            'gpt-4.1-mini' => array(
+                'name' => 'GPT-4.1 Mini',
+                'description' => __('Versione compatta di GPT-4.1, bilanciata tra velocità e qualità', 'faq-ai-generator')
+            ),
+            'gpt-4-turbo' => array(
+                'name' => 'GPT-4 Turbo',
+                'description' => __('Versione ottimizzata di GPT-4 per prestazioni più veloci', 'faq-ai-generator')
+            ),
+            'gpt-4o' => array(
+                'name' => 'GPT-4o',
+                'description' => __('Versione ottimizzata di GPT-4 per output più concisi', 'faq-ai-generator')
             )
         );
     }
