@@ -140,6 +140,14 @@ class Faq_Ai_Generator_Admin {
 		$valid['extra_prompt'] = isset($input['extra_prompt']) ? sanitize_textarea_field($input['extra_prompt']) : '';
 		$valid['custom_instructions'] = isset($input['custom_instructions']) ? sanitize_textarea_field($input['custom_instructions']) : '';
 
+		// Salva le impostazioni dei custom post type
+		$valid['enabled_post_types'] = array();
+		if (isset($input['enabled_post_types']) && is_array($input['enabled_post_types'])) {
+			foreach ($input['enabled_post_types'] as $post_type => $enabled) {
+				$valid['enabled_post_types'][$post_type] = (bool)$enabled;
+			}
+		}
+
 		// Se la chiave API è stata modificata, verifichiamola
 		if (!empty($valid['api_key']) && $valid['api_key'] !== get_option('faq_ai_generator_settings')['api_key']) {
 			$api = new Faq_Ai_Generator_Api();
@@ -174,11 +182,25 @@ class Faq_Ai_Generator_Admin {
 	 * @since    1.0.0
 	 */
 	public function add_faq_meta_box() {
+		// Recupera le impostazioni
+		$settings = get_option('faq_ai_generator_settings', array());
+		$enabled_post_types = isset($settings['enabled_post_types']) ? $settings['enabled_post_types'] : array();
+
+		// Post types di default (post e page)
+		$post_types = array('post', 'page');
+
+		// Aggiungi i custom post types abilitati
+		foreach ($enabled_post_types as $post_type => $enabled) {
+			if ($enabled) {
+				$post_types[] = $post_type;
+			}
+		}
+
 		add_meta_box(
 			'faq_ai_generator_meta_box',
 			__('FAQ AI Generator', 'faq-ai-generator'),
 			array($this, 'display_faq_meta_box'),
-			'post',
+			$post_types,
 			'normal',
 			'high'
 		);

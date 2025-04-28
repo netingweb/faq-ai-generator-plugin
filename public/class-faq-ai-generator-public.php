@@ -52,6 +52,12 @@ class Faq_Ai_Generator_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
+		// Aggiungi l'hook per lo schema.org
+		add_action('wp_head', array($this, 'add_faq_schema'));
+
+		// Aggiungi l'hook per visualizzare le FAQ nel contenuto
+		add_filter('the_content', array($this, 'display_faqs_in_content'));
+
 	}
 
 	/**
@@ -101,24 +107,43 @@ class Faq_Ai_Generator_Public {
 	}
 
 	/**
-	 * Display FAQs in the content if enabled
+	 * Visualizza le FAQ nel contenuto
 	 *
 	 * @since    1.0.0
-	 * @param    string    $content    The post content
-	 * @return   string               The modified content
+	 * @param    string    $content    Il contenuto del post
+	 * @return   string               Il contenuto modificato
 	 */
 	public function display_faqs_in_content($content) {
-		if (!is_single()) {
+		// Verifica se siamo in una pagina singola
+		if (!is_singular()) {
 			return $content;
 		}
 
-		global $post;
-		$faq_data = get_post_meta($post->ID, '_faq_ai_data', true);
+		// Recupera il post type corrente
+		$current_post_type = get_post_type();
 
-		if (empty($faq_data) || empty($faq_data['faqs']) || !$faq_data['display_in_content']) {
+		// Recupera le impostazioni
+		$settings = get_option('faq_ai_generator_settings', array());
+		$enabled_post_types = isset($settings['enabled_post_types']) ? $settings['enabled_post_types'] : array();
+
+		// Verifica se il post type è abilitato
+		$is_enabled = $current_post_type === 'post' || 
+					 $current_post_type === 'page' || 
+					 (isset($enabled_post_types[$current_post_type]) && $enabled_post_types[$current_post_type]);
+
+		if (!$is_enabled) {
 			return $content;
 		}
 
+		// Recupera i dati delle FAQ
+		$post_id = get_the_ID();
+		$faq_data = get_post_meta($post_id, '_faq_ai_data', true);
+
+		if (empty($faq_data['faqs']) || !$faq_data['display_in_content']) {
+			return $content;
+		}
+
+		// Genera l'HTML delle FAQ
 		$faq_html = '<div class="faq-ai-generator-container">';
 		$faq_html .= '<h2>' . __('Domande Frequenti', 'faq-ai-generator') . '</h2>';
 		$faq_html .= '<div class="faq-ai-generator-list">';
@@ -126,13 +151,76 @@ class Faq_Ai_Generator_Public {
 		foreach ($faq_data['faqs'] as $faq) {
 			$faq_html .= '<div class="faq-item">';
 			$faq_html .= '<div class="faq-question">' . esc_html($faq['question']) . '</div>';
-			$faq_html .= '<div class="faq-answer">' . wpautop(esc_html($faq['answer'])) . '</div>';
+			$faq_html .= '<div class="faq-answer">' . wpautop(wp_kses_post($faq['answer'])) . '</div>';
 			$faq_html .= '</div>';
 		}
 
 		$faq_html .= '</div></div>';
 
+		// Aggiungi stili CSS inline per le FAQ
+		$faq_html .= '
+		<style>
+		.faq-ai-generator-container {
+			margin: 2em 0;
+			padding: 1em;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+		.faq-ai-generator-container h2 {
+			margin-bottom: 1em;
+		}
+		.faq-item {
+			margin-bottom: 1em;
+		}
+		.faq-question {
+			font-weight: bold;
+			margin-bottom: 0.5em;
+			color: #333;
+		}
+		.faq-answer {
+			margin-left: 1em;
+			color: #666;
+		}
+		</style>';
+
 		return $content . $faq_html;
+	}
+
+	/**
+	 * Aggiunge lo schema.org delle FAQ
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_faq_schema() {
+		if (!is_singular(array('post', 'page'))) {
+			return;
+		}
+
+		$post_id = get_the_ID();
+		$faq_data = get_post_meta($post_id, '_faq_ai_data', true);
+
+		if (empty($faq_data['faqs'])) {
+			return;
+		}
+
+		$schema = array(
+			'@context' => 'https://schema.org',
+			'@type' => 'FAQPage',
+			'mainEntity' => array()
+		);
+
+		foreach ($faq_data['faqs'] as $faq) {
+			$schema['mainEntity'][] = array(
+				'@type' => 'Question',
+				'name' => $faq['question'],
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text' => $faq['answer']
+				)
+			);
+		}
+
+		echo '<script type="application/ld+json">' . json_encode($schema) . '</script>';
 	}
 
 }

@@ -25,7 +25,8 @@ $settings = get_option('faq_ai_generator_settings', array(
     'ai_provider' => 'openai',
     'model' => 'gpt-3.5-turbo',
     'extra_prompt' => '',
-    'custom_instructions' => ''
+    'custom_instructions' => '',
+    'enabled_post_types' => array()
 ));
 
 // Recupera lo stato dell'API
@@ -122,6 +123,33 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                     <p class="description">
                         <?php _e('Istruzioni extra per il prompt AI (da usare con cautela). Queste istruzioni verranno aggiunte all\'inizio del prompt.', 'faq-ai-generator'); ?>
                     </p>
+                </td>
+            </tr>
+            
+            <tr>
+                <th scope="row">
+                    <?php _e('Custom Post Types', 'faq-ai-generator'); ?>
+                </th>
+                <td>
+                    <?php
+                    $custom_post_types = get_post_types(array('_builtin' => false), 'objects');
+                    if (!empty($custom_post_types)) {
+                        foreach ($custom_post_types as $post_type) {
+                            $enabled = isset($settings['enabled_post_types'][$post_type->name]) ? $settings['enabled_post_types'][$post_type->name] : false;
+                            ?>
+                            <label>
+                                <input type="checkbox" 
+                                       name="faq_ai_generator_settings[enabled_post_types][<?php echo esc_attr($post_type->name); ?>]" 
+                                       value="1" 
+                                       <?php checked($enabled, true); ?>>
+                                <?php echo esc_html($post_type->label); ?>
+                            </label><br>
+                            <?php
+                        }
+                    } else {
+                        _e('Nessun custom post type trovato.', 'faq-ai-generator');
+                    }
+                    ?>
                 </td>
             </tr>
         </table>

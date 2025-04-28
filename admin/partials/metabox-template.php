@@ -36,7 +36,7 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
                    name="faq_ai_display_in_content" 
                    value="1" 
                    <?php checked($display_in_content, true); ?>>
-            <?php _e('Mostra FAQ nel contenuto dell\'articolo', 'faq-ai-generator'); ?>
+            <?php _e('Mostra FAQ nel contenuto', 'faq-ai-generator'); ?>
         </label>
     </div>
 
