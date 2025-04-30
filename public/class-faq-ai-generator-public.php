@@ -52,9 +52,6 @@ class Faq_Ai_Generator_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		// Aggiungi l'hook per lo schema.org
-		add_action('wp_head', array($this, 'add_faq_schema'));
-
 		// Aggiungi l'hook per visualizzare le FAQ nel contenuto
 		add_filter('the_content', array($this, 'display_faqs_in_content'));
 
@@ -145,14 +142,18 @@ class Faq_Ai_Generator_Public {
 
 		// Genera l'HTML delle FAQ
 		$faq_html = '<div class="faq-ai-generator-container">';
-		$faq_html .= '<h2>' . __('Domande Frequenti', 'faq-ai-generator') . '</h2>';
+		$faq_html .= '<h2>' . __('Frequently Asked Questions', 'faq-ai-generator') . '</h2>';
 		$faq_html .= '<div class="faq-ai-generator-list">';
 
 		foreach ($faq_data['faqs'] as $faq) {
-			$faq_html .= '<div class="faq-item">';
-			$faq_html .= '<div class="faq-question">' . esc_html($faq['question']) . '</div>';
-			$faq_html .= '<div class="faq-answer">' . wpautop(wp_kses_post($faq['answer'])) . '</div>';
-			$faq_html .= '</div>';
+			$faq_html .= sprintf(
+				'<div class="faq-item">
+					<div class="faq-question">%s</div>
+					<div class="faq-answer">%s</div>
+				</div>',
+				esc_html($faq['question']),
+				wpautop(wp_kses_post($faq['answer']))
+			);
 		}
 
 		$faq_html .= '</div></div>';
@@ -176,12 +177,43 @@ class Faq_Ai_Generator_Public {
 			font-weight: bold;
 			margin-bottom: 0.5em;
 			color: #333;
+			cursor: pointer;
+			position: relative;
+			padding-right: 20px;
+		}
+		.faq-question:after {
+			content: "+";
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.faq-question.active:after {
+			content: "-";
 		}
 		.faq-answer {
-			margin-left: 1em;
+			
 			color: #666;
+			display: none;
+		}
+		.faq-answer.active {
+			display: block;
 		}
 		</style>';
+
+		// Aggiungi JavaScript per il toggle delle FAQ
+		$faq_html .= '
+		<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			document.querySelectorAll(".faq-question").forEach(function(question) {
+				question.addEventListener("click", function() {
+					this.classList.toggle("active");
+					var answer = this.nextElementSibling;
+					answer.classList.toggle("active");
+				});
+			});
+		});
+		</script>';
 
 		return $content . $faq_html;
 	}
@@ -192,7 +224,23 @@ class Faq_Ai_Generator_Public {
 	 * @since    1.0.0
 	 */
 	public function add_faq_schema() {
-		if (!is_singular(array('post', 'page'))) {
+		if (!is_singular()) {
+			return;
+		}
+
+		// Recupera il post type corrente
+		$current_post_type = get_post_type();
+
+		// Recupera le impostazioni
+		$settings = get_option('faq_ai_generator_settings', array());
+		$enabled_post_types = isset($settings['enabled_post_types']) ? $settings['enabled_post_types'] : array();
+
+		// Verifica se il post type è abilitato
+		$is_enabled = $current_post_type === 'post' || 
+					 $current_post_type === 'page' || 
+					 (isset($enabled_post_types[$current_post_type]) && $enabled_post_types[$current_post_type]);
+
+		if (!$is_enabled) {
 			return;
 		}
 
@@ -212,15 +260,17 @@ class Faq_Ai_Generator_Public {
 		foreach ($faq_data['faqs'] as $faq) {
 			$schema['mainEntity'][] = array(
 				'@type' => 'Question',
-				'name' => $faq['question'],
+				'name' => wp_strip_all_tags($faq['question']),
 				'acceptedAnswer' => array(
 					'@type' => 'Answer',
-					'text' => $faq['answer']
+					'text' => wp_strip_all_tags($faq['answer'])
 				)
 			);
 		}
 
-		echo '<script type="application/ld+json">' . json_encode($schema) . '</script>';
+		// Stampa lo schema JSON-LD con i tag script
+		echo "\n<!-- FAQ AI Generator Schema -->\n";
+		echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . '</script>' . "\n";
 	}
 
 }

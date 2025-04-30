@@ -104,8 +104,8 @@ class Faq_Ai_Generator_Admin {
 	 */
 	public function add_plugin_admin_menu() {
 		add_options_page(
-			__('FAQ AI Generator', 'faq-ai-generator'),
-			__('FAQ AI Generator', 'faq-ai-generator'),
+			esc_html__('FAQ AI Generator', 'faq-ai-generator'),
+			esc_html__('FAQ AI Generator', 'faq-ai-generator'),
 			'manage_options',
 			$this->plugin_name,
 			array($this, 'display_plugin_setup_page')
@@ -198,7 +198,7 @@ class Faq_Ai_Generator_Admin {
 
 		add_meta_box(
 			'faq_ai_generator_meta_box',
-			__('FAQ AI Generator', 'faq-ai-generator'),
+			esc_html__('FAQ AI Generator', 'faq-ai-generator'),
 			array($this, 'display_faq_meta_box'),
 			$post_types,
 			'normal',
@@ -218,11 +218,12 @@ class Faq_Ai_Generator_Admin {
 
 		if ($model_info) {
 			echo '<div class="faq-model-info">';
-			echo sprintf(
-				__('FAQ generate con %s il %s alle %s', 'faq-ai-generator'),
+			/* translators: 1: model ID (e.g. gpt-3.5-turbo), 2: date in localized format, 3: time in 24h format */
+			printf(
+				esc_html__('FAQ generated with %1$s on %2$s at %3$s', 'faq-ai-generator'),
 				'<strong>' . esc_html($model_info['id']) . '</strong>',
-				date_i18n(get_option('date_format'), $model_info['timestamp']),
-				date('H:i', $model_info['timestamp'])
+				esc_html(date_i18n(get_option('date_format'), $model_info['timestamp'])),
+				esc_html(gmdate('H:i', $model_info['timestamp']))
 			);
 			echo '</div>';
 		}
@@ -240,12 +241,12 @@ class Faq_Ai_Generator_Admin {
 
 		$post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 		if (!$post_id) {
-			wp_send_json_error(array('message' => __('ID post non valido', 'faq-ai-generator')));
+			wp_send_json_error(array('message' => esc_html__('Invalid post ID', 'faq-ai-generator')));
 		}
 
 		$post = get_post($post_id);
 		if (!$post) {
-			wp_send_json_error(array('message' => __('Post non trovato', 'faq-ai-generator')));
+			wp_send_json_error(array('message' => esc_html__('Post not found', 'faq-ai-generator')));
 		}
 
 		// Recupera le FAQ esistenti se richiesto
@@ -263,7 +264,7 @@ class Faq_Ai_Generator_Admin {
 
 		// Verifica se c'è stato un errore nel recupero dei dettagli del modello
 		if (is_wp_error($model_details)) {
-			wp_send_json_error(array('message' => $model_details->get_error_message()));
+			wp_send_json_error(array('message' => esc_html($model_details->get_error_message())));
 			return;
 		}
 
@@ -271,7 +272,7 @@ class Faq_Ai_Generator_Admin {
 		$result = $api->generate_faqs($post->post_content, $existing_faqs);
 
 		if (is_wp_error($result)) {
-			wp_send_json_error(array('message' => $result->get_error_message()));
+			wp_send_json_error(array('message' => esc_html($result->get_error_message())));
 			return;
 		}
 
@@ -305,20 +306,38 @@ class Faq_Ai_Generator_Admin {
 		check_ajax_referer('faq_ai_nonce', 'nonce');
 
 		if (!current_user_can('edit_posts')) {
-			wp_send_json_error(array('message' => __('Permessi insufficienti', 'faq-ai-generator')));
+			wp_send_json_error(array('message' => esc_html__('Insufficient permissions', 'faq-ai-generator')));
 		}
 
-		$post_id = intval($_POST['post_id']);
+		$post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+		if (!$post_id) {
+			wp_send_json_error(array('message' => esc_html__('Invalid post ID', 'faq-ai-generator')));
+		}
+
 		$faqs = array();
 		$display_in_content = isset($_POST['display_in_content']) ? (bool)$_POST['display_in_content'] : true;
 
-		if (isset($_POST['faqs']) && is_array($_POST['faqs'])) {
-			foreach ($_POST['faqs'] as $faq) {
+		// Sanitizza l'input prima di qualsiasi controllo
+		$raw_faqs = array();
+		if (isset($_POST['faqs'])) {
+			// Sanitizziamo prima l'input grezzo
+			$raw_faqs = json_decode(sanitize_text_field(wp_unslash($_POST['faqs'])), true);
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				wp_send_json_error(array('message' => esc_html__('Invalid FAQ format', 'faq-ai-generator')));
+			}
+		}
+
+		if (is_array($raw_faqs)) {
+			$faqs_data = array_map(function($faq) {
+				return array(
+					'question' => isset($faq['question']) ? sanitize_text_field($faq['question']) : '',
+					'answer' => isset($faq['answer']) ? wp_kses_post($faq['answer']) : ''
+				);
+			}, $raw_faqs);
+
+			foreach ($faqs_data as $faq) {
 				if (!empty($faq['question']) && !empty($faq['answer'])) {
-					$faqs[] = array(
-						'question' => sanitize_text_field($faq['question']),
-						'answer' => wp_kses_post($faq['answer'])
-					);
+					$faqs[] = $faq;
 				}
 			}
 		}
@@ -333,11 +352,11 @@ class Faq_Ai_Generator_Admin {
 		$result = update_post_meta($post_id, '_faq_ai_data', $faq_data);
 
 		if ($result === false) {
-			wp_send_json_error(array('message' => __('Errore durante il salvataggio delle FAQ', 'faq-ai-generator')));
+			wp_send_json_error(array('message' => esc_html__('Error while saving FAQs', 'faq-ai-generator')));
 		}
 
 		wp_send_json_success(array(
-			'message' => __('FAQ salvate con successo', 'faq-ai-generator'),
+			'message' => esc_html__('FAQs saved successfully', 'faq-ai-generator'),
 			'faqs' => $faqs,
 			'display_in_content' => $display_in_content
 		));
@@ -351,7 +370,7 @@ class Faq_Ai_Generator_Admin {
 	 */
 	public function save_faq_data($post_id) {
 		// Verifica nonce
-		if (!isset($_POST['faq_ai_nonce']) || !wp_verify_nonce($_POST['faq_ai_nonce'], 'faq_ai_nonce')) {
+		if (!isset($_POST['faq_ai_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['faq_ai_nonce'])), 'faq_ai_nonce')) {
 			return;
 		}
 
@@ -367,12 +386,17 @@ class Faq_Ai_Generator_Admin {
 
 		// Prepara i dati delle FAQ
 		$faqs = array();
-		if (isset($_POST['faq_ai_questions']) && isset($_POST['faq_ai_answers'])) {
-			foreach ($_POST['faq_ai_questions'] as $index => $question) {
-				if (!empty($question) && !empty($_POST['faq_ai_answers'][$index])) {
+		if (isset($_POST['faq_ai_questions']) && isset($_POST['faq_ai_answers']) && 
+			is_array($_POST['faq_ai_questions']) && is_array($_POST['faq_ai_answers'])) {
+			
+			$questions = array_map('sanitize_text_field', wp_unslash($_POST['faq_ai_questions']));
+			$answers = array_map('wp_kses_post', wp_unslash($_POST['faq_ai_answers']));
+			
+			foreach ($questions as $index => $question) {
+				if (isset($answers[$index])) {
 					$faqs[] = array(
-						'question' => wp_unslash(sanitize_text_field($question)),
-						'answer' => wp_unslash(wp_kses_post($_POST['faq_ai_answers'][$index]))
+						'question' => $question,
+						'answer' => $answers[$index]
 					);
 				}
 			}
@@ -431,7 +455,7 @@ class Faq_Ai_Generator_Admin {
 
 	public function generate_faqs($content, $existing_faqs = array()) {
 		if (empty($this->api_key)) {
-			return new WP_Error('no_api_key', __('Chiave API non configurata', 'faq-ai-generator'));
+			return new WP_Error('no_api_key', esc_html__('API key not configured', 'faq-ai-generator'));
 		}
 
 		// Ottieni le impostazioni

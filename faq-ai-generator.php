@@ -1,12 +1,6 @@
 <?php
 
 /**
- * The plugin bootstrap file
- *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
  *
  * @link              https://lucamainieri.it
  * @since             1.0.0
@@ -15,10 +9,10 @@
  * @wordpress-plugin
  * Plugin Name:       FAQ AI Generator Schema
  * Plugin URI:        https://www.neting.it
- * Description:       FAQ AI Generator and schema org for Blog Wordpress Articles
- * Version:           1.0.0
+ * Description:       FAQ AI Generator and schema org for WordPress Posts, Pages and Custom Post Types
+ * Version:           1.1.1
  * Author:            Luca Mainieri
- * Author URI:        https://lucamainieri.it/
+ * Author URI:        https://www.neting.it/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       faq-ai-generator
@@ -35,7 +29,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FAQ_AI_GENERATOR_VERSION', '1.0.0' );
+define( 'FAQ_AI_GENERATOR_VERSION', '1.1.1' );
 
 /**
  * The code that runs during plugin activation.

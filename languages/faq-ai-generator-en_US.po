@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FAQ AI Generator\n"
+"POT-Creation-Date: 2024-03-21\n"
+"PO-Revision-Date: 2024-03-21\n"
+"Last-Translator: Luca Mainieri\n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Admin
+msgid "Genera FAQ"
+msgstr "Generate FAQ"
+
+msgid "Mostra FAQ nel contenuto"
+msgstr "Show FAQ in content"
+
+msgid "Domanda"
+msgstr "Question"
+
+msgid "Risposta"
+msgstr "Answer"
+
+msgid "Rimuovi"
+msgstr "Remove"
+
+msgid "Aggiungi una nuova FAQ"
+msgstr "Add new FAQ"
+
+msgid "Generazione in corso..."
+msgstr "Generating..."
+
+msgid "FAQ generate con successo!"
+msgstr "FAQ generated successfully!"
+
+msgid "Si è verificato un errore durante la generazione delle FAQ."
+msgstr "An error occurred while generating FAQs."
+
+# Settings
+msgid "OpenAI API Key"
+msgstr "OpenAI API Key"
+
+msgid "Inserisci la tua API Key di OpenAI. Puoi ottenerla da"
+msgstr "Enter your OpenAI API Key. You can get it from"
+
+msgid "Provider AI"
+msgstr "AI Provider"
+
+msgid "Modello"
+msgstr "Model"
+
+msgid "Extra Prompt"
+msgstr "Extra Prompt"
+
+msgid "Istruzioni extra per il prompt AI (da usare con cautela). Queste istruzioni verranno aggiunte all'inizio del prompt."
+msgstr "Extra instructions for the AI prompt (use with caution). These instructions will be added at the beginning of the prompt."
+
+msgid "Custom Post Types"
+msgstr "Custom Post Types"
+
+msgid "Nessun custom post type trovato."
+msgstr "No custom post types found."
+
+# Models
+msgid "Modello veloce ed economico, ideale per la maggior parte delle applicazioni"
+msgstr "Fast and economical model, ideal for most applications"
+
+msgid "Modello più avanzato e preciso, ideale per contenuti complessi"
+msgstr "More advanced and accurate model, ideal for complex content"
+
+msgid "Versione compatta di GPT-4.1, bilanciata tra velocità e qualità"
+msgstr "Compact version of GPT-4.1, balanced between speed and quality"
+
+msgid "Versione ottimizzata di GPT-4 per prestazioni più veloci"
+msgstr "Optimized version of GPT-4 for faster performance"
+
+msgid "Versione ottimizzata di GPT-4 per output più concisi"
+msgstr "Optimized version of GPT-4 for more concise output"
+
+# Public
+msgid "Domande Frequenti"
+msgstr "Frequently Asked Questions"
+
+# Errors
+msgid "API key non configurata"
+msgstr "API key not configured"
+
+msgid "Permessi insufficienti"
+msgstr "Insufficient permissions"
+
+msgid "ID post non valido"
+msgstr "Invalid post ID"
+
+msgid "Post non trovato"
+msgstr "Post not found"
+
+msgid "Errore durante il salvataggio delle FAQ"
+msgstr "Error while saving FAQs"
+
+msgid "FAQ salvate con successo"
+msgstr "FAQs saved successfully"
+
+msgid "Formato FAQ non valido"
+msgstr "Invalid FAQ format"
+
+msgid "Risposta API non valida"
+msgstr "Invalid API response" 

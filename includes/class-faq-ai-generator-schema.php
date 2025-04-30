@@ -41,7 +41,7 @@ class Faq_Ai_Generator_Schema {
             ];
         }
 
-        return '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . '</script>';
+        return '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . '</script>';
     }
 
     /**
@@ -58,7 +58,7 @@ class Faq_Ai_Generator_Schema {
         $schema = $this->generate_schema($post->ID);
         
         if (!empty($schema)) {
-            echo $schema;
+            echo wp_kses_post($schema);
         }
     }
 } 

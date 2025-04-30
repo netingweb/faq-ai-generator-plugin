@@ -56,7 +56,7 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
         <table class="form-table">
             <tr>
                 <th scope="row">
-                    <label for="api_key"><?php _e('OpenAI API Key', 'faq-ai-generator'); ?></label>
+                    <label for="api_key"><?php esc_html_e('OpenAI API Key', 'faq-ai-generator'); ?></label>
                 </th>
                 <td>
                     <input type="password" 
@@ -70,7 +70,7 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                         </span>
                     <?php endif; ?>
                     <p class="description">
-                        <?php _e('Inserisci la tua API Key di OpenAI. Puoi ottenerla da', 'faq-ai-generator'); ?>
+                        <?php esc_html_e('Enter your OpenAI API Key. You can get it from', 'faq-ai-generator'); ?>
                         <a href="https://platform.openai.com/api-keys" target="_blank">https://platform.openai.com/api-keys</a>
                     </p>
                 </td>
@@ -78,12 +78,12 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
             
             <tr>
                 <th scope="row">
-                    <label for="ai_provider"><?php _e('Provider AI', 'faq-ai-generator'); ?></label>
+                    <label for="ai_provider"><?php esc_html_e('AI Provider', 'faq-ai-generator'); ?></label>
                 </th>
                 <td>
                     <select id="ai_provider" name="faq_ai_generator_settings[ai_provider]">
                         <option value="openai" <?php selected($settings['ai_provider'], 'openai'); ?>>
-                            <?php _e('OpenAI', 'faq-ai-generator'); ?>
+                            <?php esc_html_e('OpenAI', 'faq-ai-generator'); ?>
                         </option>
                     </select>
                 </td>
@@ -91,7 +91,7 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
             
             <tr>
                 <th scope="row">
-                    <label for="model"><?php _e('Modello', 'faq-ai-generator'); ?></label>
+                    <label for="model"><?php esc_html_e('Model', 'faq-ai-generator'); ?></label>
                 </th>
                 <td>
                     <select id="model" name="faq_ai_generator_settings[model]">
@@ -111,7 +111,7 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
             
             <tr>
                 <th scope="row">
-                    <label for="extra_prompt"><?php _e('Extra Prompt', 'faq-ai-generator'); ?></label>
+                    <label for="extra_prompt"><?php esc_html_e('Extra Prompt', 'faq-ai-generator'); ?></label>
                 </th>
                 <td>
                     <textarea 
@@ -121,14 +121,14 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                         rows="3"
                     ><?php echo esc_textarea(isset($settings['extra_prompt']) ? $settings['extra_prompt'] : ''); ?></textarea>
                     <p class="description">
-                        <?php _e('Istruzioni extra per il prompt AI (da usare con cautela). Queste istruzioni verranno aggiunte all\'inizio del prompt.', 'faq-ai-generator'); ?>
+                        <?php esc_html_e('Extra instructions for the AI prompt (use with caution). These instructions will be added at the beginning of the prompt.', 'faq-ai-generator'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
                 <th scope="row">
-                    <?php _e('Custom Post Types', 'faq-ai-generator'); ?>
+                    <?php esc_html_e('Custom Post Types', 'faq-ai-generator'); ?>
                 </th>
                 <td>
                     <?php
@@ -147,7 +147,7 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                             <?php
                         }
                     } else {
-                        _e('Nessun custom post type trovato.', 'faq-ai-generator');
+                        esc_html_e('No custom post types found.', 'faq-ai-generator');
                     }
                     ?>
                 </td>

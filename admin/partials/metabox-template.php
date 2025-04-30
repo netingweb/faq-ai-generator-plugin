@@ -25,7 +25,7 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
     <div class="faq-ai-generator-controls">
         <div class="faq-ai-actions">
             <button type="button" id="faq-ai-generate" class="button button-primary">
-                <?php _e('Genera FAQ', 'faq-ai-generator'); ?>
+                <?php esc_html_e('Generate FAQ', 'faq-ai-generator'); ?>
             </button>
         </div>
     </div>
@@ -36,7 +36,7 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
                    name="faq_ai_display_in_content" 
                    value="1" 
                    <?php checked($display_in_content, true); ?>>
-            <?php _e('Mostra FAQ nel contenuto', 'faq-ai-generator'); ?>
+            <?php esc_html_e('Show FAQ in content', 'faq-ai-generator'); ?>
         </label>
     </div>
 
@@ -47,14 +47,14 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
                     <input type="text" 
                            name="faq_ai_questions[]" 
                            value="<?php echo esc_attr($faq['question']); ?>" 
-                           placeholder="<?php _e('Domanda', 'faq-ai-generator'); ?>">
+                           placeholder="<?php esc_attr_e('Question', 'faq-ai-generator'); ?>">
                 </div>
                 <div class="faq-answer">
                     <textarea name="faq_ai_answers[]" 
-                              placeholder="<?php _e('Risposta', 'faq-ai-generator'); ?>"><?php echo esc_textarea($faq['answer']); ?></textarea>
+                              placeholder="<?php esc_attr_e('Answer', 'faq-ai-generator'); ?>"><?php echo esc_textarea($faq['answer']); ?></textarea>
                 </div>
                 <button type="button" class="button faq-remove">
-                    <?php _e('Rimuovi', 'faq-ai-generator'); ?>
+                    <?php esc_html_e('Remove', 'faq-ai-generator'); ?>
                 </button>
             </div>
         <?php endforeach; ?>
@@ -62,26 +62,26 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
 
     <div class="faq-ai-generator-add">
         <button type="button" class="button" id="faq-ai-add">
-            <?php _e('Aggiungi una nuova FAQ', 'faq-ai-generator'); ?>
+            <?php esc_html_e('Add new FAQ', 'faq-ai-generator'); ?>
         </button>
     </div>
 
-    <input type="hidden" name="faq_ai_nonce" value="<?php echo wp_create_nonce('faq_ai_nonce'); ?>">
+    <input type="hidden" name="faq_ai_nonce" value="<?php echo esc_attr(wp_create_nonce('faq_ai_nonce')); ?>">
 
     <!-- Popup di conferma -->
     <div id="faq-ai-confirm-dialog" style="display: none;">
         <div class="faq-ai-confirm-content">
-            <h3><?php _e('Conferma generazione FAQ', 'faq-ai-generator'); ?></h3>
-            <p><?php _e('Scegli come procedere con la generazione delle FAQ:', 'faq-ai-generator'); ?></p>
+            <h3><?php esc_html_e('Confirm FAQ generation', 'faq-ai-generator'); ?></h3>
+            <p><?php esc_html_e('Choose how to proceed with FAQ generation:', 'faq-ai-generator'); ?></p>
             <div class="faq-ai-confirm-buttons">
                 <button type="button" id="faq-ai-overwrite" class="button button-primary">
-                    <?php _e('Sovrascrivi FAQ esistenti', 'faq-ai-generator'); ?>
+                    <?php esc_html_e('Overwrite existing FAQs', 'faq-ai-generator'); ?>
                 </button>
                 <button type="button" id="faq-ai-append" class="button">
-                    <?php _e('Aggiungi nuove FAQ', 'faq-ai-generator'); ?>
+                    <?php esc_html_e('Add new FAQs', 'faq-ai-generator'); ?>
                 </button>
                 <button type="button" id="faq-ai-cancel" class="button">
-                    <?php _e('Annulla', 'faq-ai-generator'); ?>
+                    <?php esc_html_e('Cancel', 'faq-ai-generator'); ?>
                 </button>
             </div>
         </div>
@@ -201,15 +201,15 @@ jQuery(document).ready(function($) {
         var $button = $('#faq-ai-generate');
         var originalText = $button.html();
         
-        $button.prop('disabled', true).html('<span class="dashicons dashicons-update spinning"></span> <?php _e('Generazione in corso...', 'faq-ai-generator'); ?>');
+        $button.prop('disabled', true).html('<span class="dashicons dashicons-update spinning"></span> <?php esc_html_e('Generating...', 'faq-ai-generator'); ?>');
 
         $.ajax({
             url: ajaxurl,
             type: 'POST',
             data: {
                 action: 'generate_faqs',
-                post_id: '<?php echo $post->ID; ?>',
-                nonce: '<?php echo wp_create_nonce('faq_ai_nonce'); ?>',
+                post_id: '<?php echo esc_attr($post->ID); ?>',
+                nonce: '<?php echo esc_attr(wp_create_nonce('faq_ai_nonce')); ?>',
                 append: shouldAppend ? 'true' : 'false'
             },
             success: function(response) {
@@ -230,13 +230,13 @@ jQuery(document).ready(function($) {
                     });
 
                     $('.faq-ai-generator-list').html(faqsHtml);
-                    $('#faq-ai-message').html('<div class="notice notice-success"><p><?php _e('FAQ generate con successo!', 'faq-ai-generator'); ?></p></div>');
+                    $('#faq-ai-message').html('<div class="notice notice-success"><p><?php esc_html_e('FAQs generated successfully!', 'faq-ai-generator'); ?></p></div>');
                 } else {
-                    $('#faq-ai-message').html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
+                    $('#faq-ai-message').html('<div class="notice notice-error"><p><?php esc_html_e('An error occurred while generating FAQs.', 'faq-ai-generator'); ?></p></div>');
                 }
             },
             error: function() {
-                $('#faq-ai-message').html('<div class="notice notice-error"><p><?php _e('Si è verificato un errore durante la generazione delle FAQ.', 'faq-ai-generator'); ?></p></div>');
+                $('#faq-ai-message').html('<div class="notice notice-error"><p><?php esc_html_e('An error occurred while generating FAQs.', 'faq-ai-generator'); ?></p></div>');
             },
             complete: function() {
                 $button.prop('disabled', false).html(originalText);

@@ -70,7 +70,7 @@ class Faq_Ai_Generator {
 		if ( defined( 'FAQ_AI_GENERATOR_VERSION' ) ) {
 			$this->version = FAQ_AI_GENERATOR_VERSION;
 		} else {
-			$this->version = '1.0.0';
+			$this->version = '1.1.0';
 		}
 		$this->plugin_name = 'faq-ai-generator';
 
@@ -184,7 +184,7 @@ class Faq_Ai_Generator {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_filter( 'the_content', $plugin_public, 'display_faqs_in_content' );
-		$this->loader->add_action( 'wp_head', $plugin_schema, 'add_schema_to_head' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'add_faq_schema', 1 );
 
 	}
 

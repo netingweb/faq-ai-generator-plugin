@@ -20,23 +20,23 @@ class Faq_Ai_Generator_Models {
         return array(
             'gpt-3.5-turbo' => array(
                 'name' => 'GPT-3.5 Turbo',
-                'description' => __('Modello veloce ed economico, ideale per la maggior parte delle applicazioni', 'faq-ai-generator')
+                'description' => __('Fast and economical model, ideal for most applications', 'faq-ai-generator')
             ),
             'gpt-4' => array(
                 'name' => 'GPT-4',
-                'description' => __('Modello più avanzato e preciso, ideale per contenuti complessi', 'faq-ai-generator')
+                'description' => __('More advanced and accurate model, ideal for complex content', 'faq-ai-generator')
             ),
             'gpt-4.1-mini' => array(
                 'name' => 'GPT-4.1 Mini',
-                'description' => __('Versione compatta di GPT-4.1, bilanciata tra velocità e qualità', 'faq-ai-generator')
+                'description' => __('Compact version of GPT-4.1, balanced between speed and quality', 'faq-ai-generator')
             ),
             'gpt-4-turbo' => array(
                 'name' => 'GPT-4 Turbo',
-                'description' => __('Versione ottimizzata di GPT-4 per prestazioni più veloci', 'faq-ai-generator')
+                'description' => __('Optimized version of GPT-4 for faster performance', 'faq-ai-generator')
             ),
             'gpt-4o' => array(
                 'name' => 'GPT-4o',
-                'description' => __('Versione ottimizzata di GPT-4 per output più concisi', 'faq-ai-generator')
+                'description' => __('Optimized version of GPT-4 for more concise output', 'faq-ai-generator')
             )
         );
     }
