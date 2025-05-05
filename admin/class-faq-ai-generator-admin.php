@@ -218,7 +218,7 @@ class Faq_Ai_Generator_Admin {
 
 		if ($model_info) {
 			echo '<div class="faq-model-info">';
-			/* translators: 1: model ID (e.g. gpt-3.5-turbo), 2: date in localized format, 3: time in 24h format */
+			/* translators: %1$s: model ID (e.g. gpt-3.5-turbo), %2$s: date in localized format, %3$s: time in 24h format */
 			printf(
 				esc_html__('FAQ generated with %1$s on %2$s at %3$s', 'faq-ai-generator'),
 				'<strong>' . esc_html($model_info['id']) . '</strong>',

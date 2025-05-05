@@ -163,6 +163,226 @@ class Faq_Ai_Generator_Api {
     }
 
     /**
+     * Recupera il contenuto della pagina tramite CURL
+     *
+     * @since    1.0.0
+     * @param    int       $post_id    ID della pagina
+     * @return   string               Contenuto della pagina
+     */
+    private function get_page_content_via_curl($post_id) {
+        // Ottieni l'URL della pagina
+        $page_url = get_permalink($post_id);
+        
+        // Esegui la richiesta usando wp_remote_get
+        $response = wp_remote_get($page_url, array(
+            'timeout' => 30,
+            'sslverify' => false,
+            'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        ));
+
+        // Verifica se ci sono errori
+        if (is_wp_error($response)) {
+            error_log('FAQ AI Generator - WP Remote Error: ' . $response->get_error_message());
+            return '';
+        }
+
+        // Ottieni il contenuto HTML
+        $html = wp_remote_retrieve_body($response);
+        
+        // Estrai il contenuto principale
+        $dom = new DOMDocument();
+        @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+        
+        // Rimuovi script e stili
+        $scripts = $dom->getElementsByTagName('script');
+        $styles = $dom->getElementsByTagName('style');
+        
+        foreach ($scripts as $script) {
+            $script->parentNode->removeChild($script);
+        }
+        
+        foreach ($styles as $style) {
+            $style->parentNode->removeChild($style);
+        }
+        
+        // Cerca il contenuto principale nel tag main
+        $content = '';
+        $main = $dom->getElementsByTagName('main')->item(0);
+        
+        if ($main) {
+            // Converti il contenuto in markdown
+            $content = $this->html_to_markdown($main);
+        } else {
+            // Fallback: cerca altri contenitori comuni
+            $selectors = array(
+                'article',
+                '#main-content',
+                '#content',
+                '.main-content',
+                '.content',
+                '.entry-content'
+            );
+            
+            foreach ($selectors as $selector) {
+                if (strpos($selector, '#') === 0) {
+                    $element = $dom->getElementById(substr($selector, 1));
+                } else if (strpos($selector, '.') === 0) {
+                    $elements = $dom->getElementsByTagName('*');
+                    foreach ($elements as $element) {
+                        if (strpos($element->getAttribute('class'), substr($selector, 1)) !== false) {
+                            $content = $this->html_to_markdown($element);
+                            break 2;
+                        }
+                    }
+                } else {
+                    $element = $dom->getElementsByTagName($selector)->item(0);
+                }
+                
+                if ($element) {
+                    $content = $this->html_to_markdown($element);
+                    break;
+                }
+            }
+        }
+        
+        // Pulisci il contenuto
+        $content = preg_replace('/\s+/', ' ', $content);
+        $content = trim($content);
+        
+        return $content;
+    }
+
+    /**
+     * Converte HTML in Markdown
+     *
+     * @since    1.0.0
+     * @param    DOMElement    $element    Elemento DOM da convertire
+     * @return   string                   Contenuto in formato Markdown
+     */
+    private function html_to_markdown($element) {
+        $markdown = '';
+        
+        // Funzione ricorsiva per convertire i nodi
+        $convert_node = function($node) use (&$convert_node, &$markdown) {
+            if ($node->nodeType === XML_TEXT_NODE) {
+                $text = trim($node->textContent);
+                if (!empty($text)) {
+                    $markdown .= $text . ' ';
+                }
+                return;
+            }
+            
+            if ($node->nodeType === XML_ELEMENT_NODE) {
+                $tag = strtolower($node->nodeName);
+                
+                // Gestisci i tag principali
+                switch ($tag) {
+                    case 'h1':
+                    case 'h2':
+                    case 'h3':
+                    case 'h4':
+                    case 'h5':
+                    case 'h6':
+                        $level = substr($tag, 1);
+                        $markdown .= "\n\n" . str_repeat('#', $level) . ' ';
+                        break;
+                        
+                    case 'p':
+                        $markdown .= "\n\n";
+                        break;
+                        
+                    case 'br':
+                        $markdown .= "\n";
+                        break;
+                        
+                    case 'strong':
+                    case 'b':
+                        $markdown .= '**';
+                        break;
+                        
+                    case 'em':
+                    case 'i':
+                        $markdown .= '*';
+                        break;
+                        
+                    case 'ul':
+                        $markdown .= "\n\n";
+                        break;
+                        
+                    case 'ol':
+                        $markdown .= "\n\n";
+                        break;
+                        
+                    case 'li':
+                        $markdown .= "\n- ";
+                        break;
+                        
+                    case 'blockquote':
+                        $markdown .= "\n\n> ";
+                        break;
+                        
+                    case 'code':
+                        $markdown .= '`';
+                        break;
+                        
+                    case 'pre':
+                        $markdown .= "\n\n```\n";
+                        break;
+                }
+                
+                // Processa i nodi figli
+                foreach ($node->childNodes as $child) {
+                    $convert_node($child);
+                }
+                
+                // Chiudi i tag
+                switch ($tag) {
+                    case 'strong':
+                    case 'b':
+                        $markdown .= '**';
+                        break;
+                        
+                    case 'em':
+                    case 'i':
+                        $markdown .= '*';
+                        break;
+                        
+                    case 'code':
+                        $markdown .= '`';
+                        break;
+                        
+                    case 'pre':
+                        $markdown .= "\n```\n";
+                        break;
+                        
+                    case 'p':
+                    case 'h1':
+                    case 'h2':
+                    case 'h3':
+                    case 'h4':
+                    case 'h5':
+                    case 'h6':
+                    case 'ul':
+                    case 'ol':
+                    case 'blockquote':
+                        $markdown .= "\n";
+                        break;
+                }
+            }
+        };
+        
+        // Converti l'elemento
+        $convert_node($element);
+        
+        // Pulisci il markdown
+        $markdown = preg_replace('/\n{3,}/', "\n\n", $markdown);
+        $markdown = preg_replace('/\s+/', ' ', $markdown);
+        $markdown = trim($markdown);
+        
+        return $markdown;
+    }
+
+    /**
      * Generate FAQs from post content
      *
      * @since    1.0.0
@@ -173,6 +393,16 @@ class Faq_Ai_Generator_Api {
     public function generate_faqs($content, $existing_faqs = array()) {
         if (empty($this->api_key)) {
             return new WP_Error('no_api_key', __('API key not configured', 'faq-ai-generator'));
+        }
+
+        if (empty($content)) {
+            $post_id = get_the_ID();
+            if ($post_id) {
+                $content = $this->get_page_content_via_curl($post_id);
+                if (empty($content)) {
+                    return new WP_Error('no_content', __('No content found to generate FAQs', 'faq-ai-generator'));
+                }
+            }
         }
 
         // Recupera le impostazioni
@@ -196,7 +426,7 @@ class Faq_Ai_Generator_Api {
                 )
             ),
             'temperature' => 0.7,
-            'max_tokens' => 5000
+            'max_tokens' => 3000
         );
 
         // Modifica dei log per usare la costante di debug
@@ -290,8 +520,11 @@ class Faq_Ai_Generator_Api {
             error_log('FAQ AI Generator - Raw Content: ' . $content);
         }
         
+        // Rimuovi eventuali delimitatori di codice Markdown
+        $content = preg_replace('/^```(?:json)?|```$/im', '', $content);
+
         // Rimuovi eventuali caratteri di escape e newline
-        $content = str_replace(['\n', '\r'], '', $content);
+        $content = trim(str_replace(["\r"], '', $content));
         
         // Prova a decodificare come JSON
         $decoded = json_decode($content, true);
