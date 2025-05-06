@@ -106,4 +106,13 @@ msgid "Formato FAQ non valido"
 msgstr "Invalid FAQ format"
 
 msgid "Risposta API non valida"
-msgstr "Invalid API response" 
+msgstr "Invalid API response"
+
+msgid "Debug Mode"
+msgstr "Debug Mode"
+
+msgid "Enable debug mode"
+msgstr "Enable debug mode"
+
+msgid "Enable this option to log debug information to the WordPress debug log. Use this only for development and troubleshooting."
+msgstr "Enable this option to log debug information to the WordPress debug log. Use this only for development and troubleshooting." 

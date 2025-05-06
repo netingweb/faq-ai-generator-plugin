@@ -1,63 +1,55 @@
-# macOS system files
+# File di sistema
 .DS_Store
-.AppleDouble
-.LSOverride
-Icon
-._*
+Thumbs.db
+*.swp
+*.swo
 
-# Thumbnails
-._*
+# File di ambiente
+.env
+.env.local
+.env.*.local
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# WordPress specific
-wp-config.php
-wp-content/advanced-cache.php
-wp-content/backup-db/
-wp-content/backups/
-wp-content/blogs.dir/
-wp-content/cache/
-wp-content/upgrade/
-wp-content/uploads/
-wp-content/mu-plugins/
-wp-content/wp-cache-config.php
-wp-content/plugins/hello.php
-
-# IDE specific files
+# File di IDE
 .idea/
 .vscode/
 *.sublime-project
 *.sublime-workspace
 
-# Node modules and logs
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# Build files
-dist/
-build/
-
-# Composer
+# File di dipendenze
 /vendor/
-composer.lock 
+/node_modules/
+composer.lock
+package-lock.json
+yarn.lock
+
+# File di build e distribuzione
+/dist/
+/build/
+*.zip
+
+# File di log
+*.log
+logs/
+
+# File di configurazione locale
+wp-config.php
+wp-config-local.php
+
+# File temporanei
+*.tmp
+*.temp
+*.bak
+
+# File di debug
+debug.log
+debug.txt
+
+# File di cache
+*.cache
+.cache/
+wp-content/cache/
+
+# File di backup
+*.backup
+*.bak
+*.old 

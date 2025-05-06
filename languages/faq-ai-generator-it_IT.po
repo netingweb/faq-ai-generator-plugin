@@ -342,7 +342,4 @@ msgid "cURL error 28: Operation timed out after 30002 milliseconds with 0 bytes 
 msgstr "Errore cURL 28: Operazione scaduta dopo 30002 millisecondi senza ricevere dati"
 
 msgid "The request took too long. Please try again later."
-msgstr "La richiesta ha impiegato troppo tempo. Per favore riprova più tardi."
-
-msgid "No content found to generate FAQs"
-msgstr "Nessun contenuto trovato per generare le FAQ" 
+msgstr "La richiesta ha impiegato troppo tempo. Per favore riprova più tardi." 

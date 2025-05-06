@@ -10,7 +10,8 @@
 
 // Definizione della costante di debug
 if (!defined('FAQ_AI_DEBUG')) {
-    define('FAQ_AI_DEBUG', true); // Impostare a true solo per sviluppo
+    $settings = get_option('faq_ai_generator_settings', array());
+    define('FAQ_AI_DEBUG', isset($settings['debug_mode']) ? (bool)$settings['debug_mode'] : false);
 }
 
 class Faq_Ai_Generator_Api {
@@ -234,15 +235,20 @@ class Faq_Ai_Generator_Api {
         // Recupera i dati ACF in modo flessibile
         $acf_content = '';
         if (function_exists('get_fields')) {
+            if (FAQ_AI_DEBUG) {
+                error_log('FAQ AI Generator - ACF plugin is active, attempting to get fields');
+            }
+            
             $fields = get_fields($post_id);
             if ($fields) {
                 if (FAQ_AI_DEBUG) {
                     error_log('FAQ AI Generator - ACF Fields found: ' . count($fields));
                     error_log('FAQ AI Generator - ACF Fields: ' . print_r(array_keys($fields), true));
+                    error_log('FAQ AI Generator - ACF Fields Raw Data: ' . print_r($fields, true));
                 }
                 
                 // Funzione ricorsiva per estrarre il contenuto dai campi ACF
-                $extract_acf_content = function($field_value, $field_name = '') use (&$extract_acf_content) {
+                $extract_acf_content = function($field_value, $field_name = '', $field_type = '') use (&$extract_acf_content) {
                     $content = '';
                     
                     if (is_string($field_value)) {
@@ -251,26 +257,67 @@ class Faq_Ai_Generator_Api {
                         if (!empty($clean_text)) {
                             $content .= $clean_text . "\n";
                             if (FAQ_AI_DEBUG) {
-                                error_log("FAQ AI Generator - ACF Field '{$field_name}': Text content found (" . strlen($clean_text) . " chars)");
+                                error_log("FAQ AI Generator - ACF Field '{$field_name}' ({$field_type}): Text content found (" . strlen($clean_text) . " chars)");
                             }
                         }
                     } elseif (is_array($field_value)) {
-                        foreach ($field_value as $key => $value) {
-                            if (is_string($value)) {
-                                $clean_text = wp_strip_all_tags($value);
-                                if (!empty($clean_text)) {
-                                    $content .= $clean_text . "\n";
-                                    if (FAQ_AI_DEBUG) {
-                                        error_log("FAQ AI Generator - ACF Field '{$field_name}[{$key}]': Text content found (" . strlen($clean_text) . " chars)");
+                        // Gestione specifica per diversi tipi di campi ACF
+                        switch ($field_type) {
+                            case 'repeater':
+                                foreach ($field_value as $index => $row) {
+                                    if (is_array($row)) {
+                                        foreach ($row as $sub_field_name => $sub_field_value) {
+                                            $sub_field_content = $extract_acf_content($sub_field_value, "{$field_name}[{$index}].{$sub_field_name}");
+                                            if (!empty($sub_field_content)) {
+                                                $content .= $sub_field_content;
+                                            }
+                                        }
                                     }
                                 }
-                            } elseif (is_array($value)) {
-                                // Gestione ricorsiva per campi annidati
-                                $nested_content = $extract_acf_content($value, "{$field_name}[{$key}]");
-                                if (!empty($nested_content)) {
-                                    $content .= $nested_content;
+                                break;
+                                
+                            case 'group':
+                                foreach ($field_value as $sub_field_name => $sub_field_value) {
+                                    $sub_field_content = $extract_acf_content($sub_field_value, "{$field_name}.{$sub_field_name}");
+                                    if (!empty($sub_field_content)) {
+                                        $content .= $sub_field_content;
+                                    }
                                 }
-                            }
+                                break;
+                                
+                            case 'flexible_content':
+                                foreach ($field_value as $index => $layout) {
+                                    if (isset($layout['acf_fc_layout'])) {
+                                        $layout_name = $layout['acf_fc_layout'];
+                                        foreach ($layout as $sub_field_name => $sub_field_value) {
+                                            if ($sub_field_name !== 'acf_fc_layout') {
+                                                $sub_field_content = $extract_acf_content($sub_field_value, "{$field_name}[{$index}].{$layout_name}.{$sub_field_name}");
+                                                if (!empty($sub_field_content)) {
+                                                    $content .= $sub_field_content;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                                
+                            default:
+                                foreach ($field_value as $key => $value) {
+                                    if (is_string($value)) {
+                                        $clean_text = wp_strip_all_tags($value);
+                                        if (!empty($clean_text)) {
+                                            $content .= $clean_text . "\n";
+                                            if (FAQ_AI_DEBUG) {
+                                                error_log("FAQ AI Generator - ACF Field '{$field_name}[{$key}]': Text content found (" . strlen($clean_text) . " chars)");
+                                            }
+                                        }
+                                    } elseif (is_array($value)) {
+                                        $nested_content = $extract_acf_content($value, "{$field_name}[{$key}]");
+                                        if (!empty($nested_content)) {
+                                            $content .= $nested_content;
+                                        }
+                                    }
+                                }
                         }
                     }
                     
@@ -279,7 +326,16 @@ class Faq_Ai_Generator_Api {
                 
                 // Estrai il contenuto da tutti i campi ACF
                 foreach ($fields as $field_name => $field_value) {
-                    $field_content = $extract_acf_content($field_value, $field_name);
+                    // Ottieni il tipo di campo ACF
+                    $field_type = '';
+                    if (function_exists('get_field_object')) {
+                        $field_object = get_field_object($field_name, $post_id);
+                        if ($field_object && isset($field_object['type'])) {
+                            $field_type = $field_object['type'];
+                        }
+                    }
+                    
+                    $field_content = $extract_acf_content($field_value, $field_name, $field_type);
                     if (!empty($field_content)) {
                         $acf_content .= $field_content;
                     }
@@ -509,12 +565,90 @@ class Faq_Ai_Generator_Api {
         }
 
         if (empty($content)) {
-            $post_id = get_the_ID();
+            if (FAQ_AI_DEBUG) {
+                error_log('FAQ AI Generator - Content is empty, attempting to get content from post');
+            }
+            
+            // Prova diversi metodi per ottenere l'ID del post
+            $post_id = null;
+            
+            // 1. Controlla se siamo nella pagina di modifica del post
+            if (is_admin() && isset($_GET['post']) && isset($_GET['action']) && $_GET['action'] === 'edit') {
+                $post_id = intval($_GET['post']);
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - Edit page context, post ID: ' . $post_id);
+                    error_log('FAQ AI Generator - Current URL: ' . $_SERVER['REQUEST_URI']);
+                }
+            }
+            
+            // 2. Controlla se siamo in un contesto AJAX
+            if (!$post_id && wp_doing_ajax() && isset($_POST['post_id'])) {
+                $post_id = intval($_POST['post_id']);
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - AJAX context, post ID from POST: ' . $post_id);
+                }
+            }
+            
+            // 3. Prova get_the_ID()
+            if (!$post_id) {
+                $post_id = get_the_ID();
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - get_the_ID() result: ' . ($post_id ? $post_id : 'false'));
+                }
+            }
+            
+            // 4. Se non funziona, prova a ottenere l'ID dalla query globale
+            if (!$post_id && isset($GLOBALS['wp_query']->post)) {
+                $post_id = $GLOBALS['wp_query']->post->ID;
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - Global query post ID: ' . ($post_id ? $post_id : 'false'));
+                }
+            }
+            
             if ($post_id) {
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - Post ID found: ' . $post_id);
+                    error_log('FAQ AI Generator - Post type: ' . get_post_type($post_id));
+                    error_log('FAQ AI Generator - Current context: ' . (wp_doing_ajax() ? 'AJAX' : (is_admin() ? 'Admin' : 'Frontend')));
+                }
+                
+                // Verifica che il post esista e sia del tipo corretto
+                $post = get_post($post_id);
+                if (!$post) {
+                    if (FAQ_AI_DEBUG) {
+                        error_log('FAQ AI Generator - Post not found: ' . $post_id);
+                    }
+                    return new WP_Error('invalid_post', __('Invalid post ID. The post does not exist.', 'faq-ai-generator'));
+                }
+                
+                // Verifica che il post sia pubblicato o in bozza
+                if ($post->post_status !== 'publish' && $post->post_status !== 'draft') {
+                    if (FAQ_AI_DEBUG) {
+                        error_log('FAQ AI Generator - Post status not valid: ' . $post->post_status);
+                    }
+                    return new WP_Error('invalid_status', __('The post must be published or in draft status.', 'faq-ai-generator'));
+                }
+                
                 $content = $this->get_page_content_via_curl($post_id);
                 if (empty($content)) {
+                    if (FAQ_AI_DEBUG) {
+                        error_log('FAQ AI Generator - No content retrieved from post');
+                    }
                     return new WP_Error('no_content', __('No content found to generate FAQs', 'faq-ai-generator'));
                 }
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - Content retrieved from post, length: ' . strlen($content));
+                }
+            } else {
+                if (FAQ_AI_DEBUG) {
+                    error_log('FAQ AI Generator - No post ID found in any context');
+                    error_log('FAQ AI Generator - Current context: ' . (wp_doing_ajax() ? 'AJAX' : (is_admin() ? 'Admin' : 'Frontend')));
+                }
+                return new WP_Error('no_post', __('No post ID found. Please make sure you are on a post or page, or provide a valid post ID.', 'faq-ai-generator'));
+            }
+        } else {
+            if (FAQ_AI_DEBUG) {
+                error_log('FAQ AI Generator - Using provided content, length: ' . strlen($content));
             }
         }
 
@@ -524,6 +658,10 @@ class Faq_Ai_Generator_Api {
 
         // Genera il prompt completo
         $prompt = $this->build_prompt($content, $existing_faqs);
+        if (FAQ_AI_DEBUG) {
+            error_log('FAQ AI Generator - Built prompt, length: ' . strlen($prompt));
+            error_log('FAQ AI Generator - Prompt content: ' . substr($prompt, 0, 500) . '...');
+        }
 
         // Prepara i dati per la chiamata API
         $request_data = array(
@@ -539,7 +677,7 @@ class Faq_Ai_Generator_Api {
                 )
             ),
             'temperature' => 0.7,
-            'max_tokens' => 5000
+            'max_tokens' => 4000
         );
 
         // Modifica dei log per usare la costante di debug
@@ -613,14 +751,23 @@ class Faq_Ai_Generator_Api {
         // Rimuovi eventuali caratteri di escape e newline
         $content = str_replace(['\n', '\r'], '', $content);
         
+        // Pulisci la risposta rimuovendo i backtick e il tag json
+        $content = preg_replace('/^```json\s*|\s*```$/', '', $content);
+        $content = trim($content);
+        
+        if (FAQ_AI_DEBUG) {
+            error_log('FAQ AI Generator - Cleaned Content: ' . $content);
+        }
+        
         // Prova a decodificare come JSON
         $faqs = json_decode($content, true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
             if (FAQ_AI_DEBUG) {
                 error_log('FAQ AI Generator - JSON Error: ' . json_last_error_msg());
+                error_log('FAQ AI Generator - Failed to parse content as JSON: ' . $content);
             }
-            return new WP_Error('json_error', __('Error decoding FAQ JSON', 'faq-ai-generator'));
+            return new WP_Error('json_error', __('Error decoding FAQ JSON: ' . json_last_error_msg(), 'faq-ai-generator'));
         }
 
         if (!is_array($faqs) || empty($faqs)) {

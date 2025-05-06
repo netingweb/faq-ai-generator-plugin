@@ -152,6 +152,61 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
                     ?>
                 </td>
             </tr>
+
+            <tr>
+                <th scope="row">
+                    <?php esc_html_e('Built-in Post Types', 'faq-ai-generator'); ?>
+                </th>
+                <td>
+                    <?php
+                    // Imposta i valori di default per i post types built-in
+                    $default_post_types = array(
+                        'post' => true,  // Posts abilitati di default
+                        'page' => false  // Pages disabilitati di default
+                    );
+                    
+                    // Unisci i valori salvati con i default
+                    $enabled_post_types = isset($settings['enabled_post_types']) ? $settings['enabled_post_types'] : array();
+                    $enabled_post_types = array_merge($default_post_types, $enabled_post_types);
+                    ?>
+                    <label>
+                        <input type="checkbox" 
+                               name="faq_ai_generator_settings[enabled_post_types][post]" 
+                               value="1"
+                               readonly="readonly"
+                               class="readonly-checkbox"
+                               <?php checked($enabled_post_types['post'], true); ?>>
+                        <?php esc_html_e('Posts', 'faq-ai-generator'); ?>
+                        <span class="description"><?php esc_html_e('(Sempre abilitato)', 'faq-ai-generator'); ?></span>
+                    </label><br>
+                    <label>
+                        <input type="checkbox" 
+                               name="faq_ai_generator_settings[enabled_post_types][page]" 
+                               value="1" 
+                               <?php checked($enabled_post_types['page'], true); ?>>
+                        <?php esc_html_e('Pages', 'faq-ai-generator'); ?>
+                    </label>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row">
+                    <label for="debug_mode"><?php esc_html_e('Debug Mode', 'faq-ai-generator'); ?></label>
+                </th>
+                <td>
+                    <label>
+                        <input type="checkbox" 
+                               id="debug_mode" 
+                               name="faq_ai_generator_settings[debug_mode]" 
+                               value="1" 
+                               <?php checked(isset($settings['debug_mode']) ? $settings['debug_mode'] : false, true); ?>>
+                        <?php esc_html_e('Enable debug mode', 'faq-ai-generator'); ?>
+                    </label>
+                    <p class="description">
+                        <?php esc_html_e('Enable this option to log debug information to the WordPress debug log. Use this only for development and troubleshooting.', 'faq-ai-generator'); ?>
+                    </p>
+                </td>
+            </tr>
         </table>
         
         <?php submit_button(); ?>
@@ -175,5 +230,16 @@ $model_options = Faq_Ai_Generator_Models::get_model_options();
 .api-status.invalid {
     color: #dc3232;
     background: #fbeaea;
+}
+
+.readonly-checkbox {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.readonly-checkbox + .description {
+    color: #666;
+    font-style: italic;
+    margin-left: 5px;
 }
 </style> 

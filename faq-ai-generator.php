@@ -1,22 +1,21 @@
 <?php
 
 /**
+ * The plugin bootstrap file
  *
- * @link              https://lucamainieri.it
- * @since             1.0.0
+ * @link              https://neting.it
+ * @since             1.1.2
  * @package           Faq_Ai_Generator
  *
  * @wordpress-plugin
  * Plugin Name:       FAQ AI Generator
- * Plugin URI:        https://github.com/lucamainieri/faq-ai-generator
- * Description:       Genera FAQ in modo automatico utilizzando l'intelligenza artificiale
- * Requires at least: 6.1
- * Requires PHP:      7.0
+ * Plugin URI:        https://neting.it/faq-ai-generator
+ * Description:       Genera automaticamente FAQ per i tuoi contenuti WordPress utilizzando l'intelligenza artificiale.
  * Version:           1.1.2
- * Author:            Luca Mainieri
- * Author URI:        https://www.neting.it/
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Author:            Neting
+ * Author URI:        https://neting.it
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       faq-ai-generator
  * Domain Path:       /languages
  */

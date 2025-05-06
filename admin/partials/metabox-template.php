@@ -74,10 +74,12 @@ $faqs = isset($faq_data['faqs']) ? $faq_data['faqs'] : [];
             <h3><?php esc_html_e('Confirm FAQ generation', 'faq-ai-generator'); ?></h3>
             <p><?php esc_html_e('Choose how to proceed with FAQ generation:', 'faq-ai-generator'); ?></p>
             <div class="faq-ai-confirm-buttons">
+                <?php if (!empty($faqs)) : ?>
                 <button type="button" id="faq-ai-overwrite" class="button button-primary">
                     <?php esc_html_e('Overwrite existing FAQs', 'faq-ai-generator'); ?>
                 </button>
-                <button type="button" id="faq-ai-append" class="button">
+                <?php endif; ?>
+                <button type="button" id="faq-ai-append" class="button button-primary">
                     <?php esc_html_e('Add new FAQs', 'faq-ai-generator'); ?>
                 </button>
                 <button type="button" id="faq-ai-cancel" class="button">

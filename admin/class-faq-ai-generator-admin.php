@@ -134,20 +134,44 @@ class Faq_Ai_Generator_Admin {
 	 */
 	public function validate_settings($input) {
 		$valid = array();
+		
+		// API Key
 		$valid['api_key'] = sanitize_text_field($input['api_key']);
+		
+		// AI Provider
 		$valid['ai_provider'] = sanitize_text_field($input['ai_provider']);
+		
+		// Model
 		$valid['model'] = sanitize_text_field($input['model']);
+		
+		// Extra Prompt
 		$valid['extra_prompt'] = isset($input['extra_prompt']) ? sanitize_textarea_field($input['extra_prompt']) : '';
+		
+		// Custom Instructions
 		$valid['custom_instructions'] = isset($input['custom_instructions']) ? sanitize_textarea_field($input['custom_instructions']) : '';
-
-		// Salva le impostazioni dei custom post type
+		
+		// Enabled Post Types
 		$valid['enabled_post_types'] = array();
+		
+		// Imposta i valori di default per i post types built-in
+		$default_post_types = array(
+			'post' => true,
+			'page' => false
+		);
+		
+		// Unisci i valori di default con quelli inviati
 		if (isset($input['enabled_post_types']) && is_array($input['enabled_post_types'])) {
 			foreach ($input['enabled_post_types'] as $post_type => $enabled) {
 				$valid['enabled_post_types'][$post_type] = (bool)$enabled;
 			}
 		}
-
+		
+		// Assicurati che i post types built-in siano sempre presenti
+		$valid['enabled_post_types'] = array_merge($default_post_types, $valid['enabled_post_types']);
+		
+		// Debug Mode
+		$valid['debug_mode'] = isset($input['debug_mode']) ? (bool)$input['debug_mode'] : false;
+		
 		// Se la chiave API è stata modificata, verifichiamola
 		if (!empty($valid['api_key']) && $valid['api_key'] !== get_option('faq_ai_generator_settings')['api_key']) {
 			$api = new Faq_Ai_Generator_Api();
@@ -163,7 +187,7 @@ class Faq_Ai_Generator_Admin {
 		} elseif (empty($valid['api_key'])) {
 			delete_transient('faq_ai_api_status');
 		}
-
+		
 		return $valid;
 	}
 
@@ -186,24 +210,32 @@ class Faq_Ai_Generator_Admin {
 		$settings = get_option('faq_ai_generator_settings', array());
 		$enabled_post_types = isset($settings['enabled_post_types']) ? $settings['enabled_post_types'] : array();
 
-		// Post types di default (post e page)
-		$post_types = array('post', 'page');
+		// Post types di default (post sempre abilitato)
+		$post_types = array('post');
+
+		// Aggiungi page solo se abilitata nelle impostazioni
+		if (isset($enabled_post_types['page']) && $enabled_post_types['page']) {
+			$post_types[] = 'page';
+		}
 
 		// Aggiungi i custom post types abilitati
 		foreach ($enabled_post_types as $post_type => $enabled) {
-			if ($enabled) {
+			if ($enabled && !in_array($post_type, array('post', 'page'))) {
 				$post_types[] = $post_type;
 			}
 		}
 
-		add_meta_box(
-			'faq_ai_generator_meta_box',
-			esc_html__('FAQ AI Generator', 'faq-ai-generator'),
-			array($this, 'display_faq_meta_box'),
-			$post_types,
-			'normal',
-			'high'
-		);
+		// Aggiungi il metabox solo se ci sono post types abilitati
+		if (!empty($post_types)) {
+			add_meta_box(
+				'faq_ai_generator_meta_box',
+				esc_html__('FAQ AI Generator', 'faq-ai-generator'),
+				array($this, 'display_faq_meta_box'),
+				$post_types,
+				'normal',
+				'high'
+			);
+		}
 	}
 
 	/**
@@ -218,7 +250,7 @@ class Faq_Ai_Generator_Admin {
 
 		if ($model_info) {
 			echo '<div class="faq-model-info">';
-			/* translators: %1$s: model ID (e.g. gpt-3.5-turbo), %2$s: date in localized format, %3$s: time in 24h format */
+			/* translators: 1: model ID (e.g. gpt-3.5-turbo), 2: date in localized format, 3: time in 24h format */
 			printf(
 				esc_html__('FAQ generated with %1$s on %2$s at %3$s', 'faq-ai-generator'),
 				'<strong>' . esc_html($model_info['id']) . '</strong>',

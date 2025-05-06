@@ -5,43 +5,69 @@ Tutte le modifiche notevoli a questo progetto saranno documentate in questo file
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e questo progetto aderisce a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] - 2024-03-21
+## [1.1.2] - 2024-05-06
 
 ### Aggiunto
-- Supporto multilingua (Italiano e Inglese)
-- File di traduzione per l'inglese (faq-ai-generator-en_US.po e .mo)
-- Prompt AI localizzati in base alla lingua del sito
-- Traduzione di tutte le stringhe dell'interfaccia utente
+- Supporto completo per campi ACF (Advanced Custom Fields)
+- Log dettagliati per il debug
+- Gestione migliorata dei campi ACF annidati
+- Migliorata la pulizia del contenuto HTML
 
-### Modificato
-- Migliorata la gestione dei prompt AI per supportare più lingue
-- Aggiornato il sistema di debug per essere più efficiente
-- Ottimizzata la gestione delle risposte API
+### Migliorato
+- Aumentato il limite di token a 5000 per risposte più complete
+- Migliorata la gestione degli errori
+- Ottimizzata la conversione HTML/Markdown
+- Migliorata la gestione dei campi ACF complessi
 
 ### Corretto
-- Risolto il problema di sanitizzazione dell'input nelle FAQ
-- Corretta la gestione degli errori API
-- Migliorata la validazione dei dati in input
+- Risolto il problema con il contenuto vuoto
+- Corretta la gestione dei campi ACF annidati
+- Migliorata la gestione degli errori JSON
+- Corretta la pulizia del contenuto HTML
 
-## [1.1.0] - 2024-03-20
+## [1.1.1] - 2024-05-05
 
 ### Aggiunto
-- Supporto per GPT-4 e altri modelli avanzati
-- Sistema di debug configurabile
-- Migliorata la gestione degli errori API
-- Supporto per custom post types
+- Supporto per campi ACF di base
+- Migliorata la gestione del contenuto HTML
+- Aggiunto il supporto per il debug
 
-### Modificato
+### Migliorato
+- Ottimizzata la conversione HTML/Markdown
+- Migliorata la gestione degli errori
+- Aggiunto il supporto per più selettori HTML
+
+### Corretto
+- Risolto il problema con il contenuto vuoto
+- Corretta la gestione degli errori JSON
+- Migliorata la pulizia del contenuto HTML
+
+## [1.1.0] - 2024-05-04
+
+### Aggiunto
+- Supporto per GPT-4
+- Migliorata la gestione delle FAQ esistenti
+- Aggiunto il supporto per il debug
+
+### Migliorato
 - Ottimizzata la generazione delle FAQ
-- Migliorata l'interfaccia utente
-- Aggiornato il sistema di caching
+- Migliorata la gestione degli errori
+- Aggiunto il supporto per più modelli
 
-## [1.0.0] - 2024-03-19
+### Corretto
+- Risolto il problema con le FAQ duplicate
+- Corretta la gestione degli errori API
+- Migliorata la gestione del contenuto
+
+## [1.0.0] - 2024-05-03
 
 ### Aggiunto
-- Prima versione del plugin
-- Generazione FAQ con OpenAI
-- Integrazione schema.org
+- Generazione automatica di FAQ
+- Supporto per OpenAI API
+- Integrazione con WordPress
+- Supporto multilingua
+- Schema.org per le FAQ
 - Interfaccia amministrativa
-- Supporto per post e pagine
-- Sistema di caching base 
+- Metabox per le FAQ
+- Impostazioni configurabili
+- Supporto per post, pagine e custom post types 

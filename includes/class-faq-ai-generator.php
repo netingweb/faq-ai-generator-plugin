@@ -70,9 +70,9 @@ class Faq_Ai_Generator {
 		if ( defined( 'FAQ_AI_GENERATOR_VERSION' ) ) {
 			$this->version = FAQ_AI_GENERATOR_VERSION;
 		} else {
-			$this->version = '1.0.0';
+			$this->version = '1.1.0';
 		}
-		$this->plugin_name = 'faq-ai-generator-schema';
+		$this->plugin_name = 'faq-ai-generator';
 
 		$this->load_dependencies();
 		$this->set_locale();
