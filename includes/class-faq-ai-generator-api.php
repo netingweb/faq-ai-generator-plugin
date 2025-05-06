@@ -220,7 +220,8 @@ class Faq_Ai_Generator_Api {
                 '#content',
                 '.main-content',
                 '.content',
-                '.entry-content'
+                '.entry-content',
+                'section'
             );
             
             foreach ($selectors as $selector) {
@@ -243,6 +244,31 @@ class Faq_Ai_Generator_Api {
                     break;
                 }
             }
+        }
+
+        // Recupera i dati ACF
+        $acf_content = '';
+        if (function_exists('get_fields')) {
+            $fields = get_fields($post_id);
+            if ($fields) {
+                foreach ($fields as $key => $value) {
+                    if (is_string($value)) {
+                        $acf_content .= $value . "\n";
+                    } elseif (is_array($value)) {
+                        // Gestione dei campi ACF complessi
+                        foreach ($value as $sub_key => $sub_value) {
+                            if (is_string($sub_value)) {
+                                $acf_content .= $sub_value . "\n";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Combina il contenuto HTML con i dati ACF
+        if (!empty($acf_content)) {
+            $content .= "\n\n" . $acf_content;
         }
         
         // Pulisci il contenuto
