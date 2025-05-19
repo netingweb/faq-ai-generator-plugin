@@ -3,17 +3,17 @@
 /**
  * The plugin bootstrap file
  *
- * @link              https://neting.it
+ * @link              https://github.com/netingweb/faq-ai-generator-plugin
  * @since             1.1.2
  * @package           Faq_Ai_Generator
  *
  * @wordpress-plugin
  * Plugin Name:       FAQ AI Generator
- * Plugin URI:        https://neting.it/faq-ai-generator
+ * Plugin URI:        https://github.com/netingweb/faq-ai-generator-plugin
  * Description:       Genera automaticamente FAQ per i tuoi contenuti WordPress utilizzando l'intelligenza artificiale.
- * Version:           1.1.2
- * Author:            Neting
- * Author URI:        https://neting.it
+ * Version:           1.1.3
+ * Author:            netingweb
+ * Author URI:        https://profiles.wordpress.org/netingweb/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       faq-ai-generator

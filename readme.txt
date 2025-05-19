@@ -1,9 +1,9 @@
 === FAQ AI Generator ===
-Contributors: neting
+Contributors: netingweb
 Tags: faq, ai, openai, gpt-4, schema.org, acf
 Requires at least: 5.0
 Tested up to: 6.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,14 @@ Yes, you can modify, add, or remove FAQs directly from the plugin's admin interf
 
 == Changelog ==
 
+= 1.1.3 =
+* Updated plugin GitHub repository
+* Fixed plugin metadata for better WordPress.org guidelines compliance
+* Resolved minor documentation issues
+* Updated contributor references
+* Improved overall plugin stability
+
+
 = 1.1.2 =
 * Added full support for ACF fields
 * Improved nested ACF fields handling
@@ -108,6 +116,5 @@ FAQ AI Generator does not collect any personal data. The plugin uses the OpenAI 
 
 == Credits ==
 
-* Developed by [Neting](https://neting.it)
 * Uses [OpenAI](https://openai.com) API
 * Based on [WordPress](https://wordpress.org)
