@@ -731,8 +731,10 @@ class Faq_Ai_Generator_Api {
         if (json_last_error() !== JSON_ERROR_NONE) {
             if (FAQ_AI_DEBUG) {
                 error_log('FAQ AI Generator - JSON Error: ' . json_last_error_msg());
+                error_log('FAQ AI Generator - Failed to parse content as JSON: ' . $response_body);
             }
-            return new WP_Error('json_error', __('Error decoding API response', 'faq-ai-generator'));
+            /* translators: %s: JSON error message */
+            return new WP_Error('json_error', sprintf(__('Error decoding API response: %s', 'faq-ai-generator'), json_last_error_msg()));
         }
 
         if (!isset($body['choices'][0]['message']['content'])) {
@@ -767,7 +769,8 @@ class Faq_Ai_Generator_Api {
                 error_log('FAQ AI Generator - JSON Error: ' . json_last_error_msg());
                 error_log('FAQ AI Generator - Failed to parse content as JSON: ' . $content);
             }
-            return new WP_Error('json_error', __('Error decoding FAQ JSON: ' . json_last_error_msg(), 'faq-ai-generator'));
+            /* translators: %s: JSON error message */
+            return new WP_Error('json_error', sprintf(__('Error decoding FAQ JSON: %s', 'faq-ai-generator'), json_last_error_msg()));
         }
 
         if (!is_array($faqs) || empty($faqs)) {

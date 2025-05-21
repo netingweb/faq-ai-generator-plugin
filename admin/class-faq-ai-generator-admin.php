@@ -250,13 +250,12 @@ class Faq_Ai_Generator_Admin {
 
 		if ($model_info) {
 			echo '<div class="faq-model-info">';
-			/* translators: 1: model ID (e.g. gpt-3.5-turbo), 2: date in localized format, 3: time in 24h format */
-			printf(
-				esc_html__('FAQ generated with %1$s on %2$s at %3$s', 'faq-ai-generator'),
-				'<strong>' . esc_html($model_info['id']) . '</strong>',
-				esc_html(date_i18n(get_option('date_format'), $model_info['timestamp'])),
-				esc_html(gmdate('H:i', $model_info['timestamp']))
-			);
+			echo esc_html__('FAQ generated with', 'faq-ai-generator') . ' ';
+			echo '<strong>' . esc_html($model_info['id']) . '</strong> ';
+			echo esc_html__('on', 'faq-ai-generator') . ' ';
+			echo esc_html(date_i18n(get_option('date_format'), $model_info['timestamp'])) . ' ';
+			echo esc_html__('at', 'faq-ai-generator') . ' ';
+			echo esc_html(gmdate('H:i', $model_info['timestamp']));
 			echo '</div>';
 		}
 
