@@ -4,7 +4,7 @@
  * The plugin bootstrap file
  *
  * @link              https://github.com/netingweb/faq-ai-generator-plugin
- * @since             1.1.2
+ * @since             1.1.3
  * @package           Faq_Ai_Generator
  *
  * @wordpress-plugin
